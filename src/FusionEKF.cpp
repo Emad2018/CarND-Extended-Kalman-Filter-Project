@@ -157,7 +157,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack)
    * - Update the state and covariance matrices.
    */
   bool RADAR = 1;
-  bool LAZER = 1;
+  bool LAZER = 0;
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR && RADAR)
   {
     // TODO: Radar updates

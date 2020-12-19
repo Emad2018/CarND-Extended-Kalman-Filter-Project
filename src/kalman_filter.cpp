@@ -1,5 +1,6 @@
 #include "kalman_filter.h"
 #include <iostream>
+#include <math.h>
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -31,6 +32,7 @@ void KalmanFilter::Predict()
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
   P_ = F_ * P_ * Ft + Q_;
+  std::cout << "x predict= " << x_ << "\n";
 }
 
 void KalmanFilter::Update(const VectorXd &z)
@@ -59,11 +61,16 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
    * TODO: update the state by using Extended Kalman Filter equations
    */
 
-  float rho = sqrt(x_[0] * x_[0] + x_[1] + x_[1]);
+  float rho = sqrt((x_[0] * x_[0]) + (x_[1] * x_[1]));
+
   float theta = atan2(x_[1], x_[0]);
+  std::cout << "y= " << x_[1] << "  x= " << x_[0] << "  theta=" << theta << "\n";
   float rho_dot = ((x_[0] * x_[2]) + (x_[1] * x_[3])) / rho;
   VectorXd z_pred = VectorXd(3);
+
   z_pred << rho, theta, rho_dot;
+  std::cout << "z_ pred= " << z_pred << "\n";
+  std::cout << "z_ = " << z << "\n";
   VectorXd y = z - z_pred;
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
