@@ -64,14 +64,17 @@ void KalmanFilter::UpdateEKF(const VectorXd &z)
   float rho = sqrt((x_[0] * x_[0]) + (x_[1] * x_[1]));
 
   float theta = atan2(x_[1], x_[0]);
-  std::cout << "y= " << x_[1] << "  x= " << x_[0] << "  theta=" << theta << "\n";
   float rho_dot = ((x_[0] * x_[2]) + (x_[1] * x_[3])) / rho;
   VectorXd z_pred = VectorXd(3);
 
   z_pred << rho, theta, rho_dot;
-  std::cout << "z_ pred= " << z_pred << "\n";
-  std::cout << "z_ = " << z << "\n";
+
   VectorXd y = z - z_pred;
+
+  while (y(1) > M_PI)
+    y(1) -= 2. * M_PI;
+  while (y(1) < -M_PI)
+    y(1) += 2. * M_PI;
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
